@@ -745,18 +745,16 @@ class Generator(object):
         if self.generate_comments:
             self.print_comment(item)
         log.debug("generate %s, %s", item.__class__.__name__, item.name)
-        #
-        #log.debug('generate: %s( %s )', type(item).__name__, name)
-        #if name in self.known_symbols:
-        #    log.debug('item is in known_symbols %s'% name )
-        #    mod = self.known_symbols[name]
-        #    print >> self.imports, "from %s import %s" % (mod, name)
-        #    self.done.add(item)
-        #    if isinstance(item, typedesc.Structure):
-        #        self.done.add(item.get_head())
-        #        self.done.add(item.get_body())
-        #    return
-        #
+        if item.name in self.known_symbols:
+            log.debug('item is in known_symbols %s' % item.name)
+            mod = self.known_symbols[item.name]
+            print("from %s import %s" % (mod, item.name), file=self.imports)
+            self.done.add(item)
+            if isinstance(item, typedesc.Structure):
+                self.done.add(item.get_head())
+                self.done.add(item.get_body())
+            return
+
         # to avoid infinite recursion, we have to mark it as done
         # before actually generating the code.
         self.done.add(item)
